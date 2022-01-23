@@ -156,4 +156,62 @@ contract KBMarket is ReentrancyGuard {
         }
         return items;
     }
+
+    // return nfts that the user has purchased
+    function fetchMyNFTs() public view returns (MarketToken[] memory) {
+        uint256 totalItemCount = _tokenIds.current();
+        // a second counter for each individual user
+        uint256 itemCount = 0;
+        uint256 currentIndex = 0;
+
+        for (uint256 i = 0; i < totalItemCount; i++) {
+            if (idToMarketToken[i + 1].owner == msg.sender) {
+                itemCount += 1;
+            }
+        }
+
+        // second loop to loop through the amount
+        // you have purchased with itemcount
+        // check to see if the owner address equalt to msg.sender
+        MarketToken[] memory items = new MarketToken[](itemCount);
+        for (uint256 i = 0; i < totalItemCount; i++) {
+            if (idToMarketToken[i + 1].owner == msg.sender) {
+                uint256 currentId = idToMarketToken[i + 1].itemId;
+                //current array
+                MarketToken storage currentItem = idToMarketToken[currentId];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
+        }
+        return items;
+    }
+
+    // function for returning an array of minted nfts
+    function fetchItemsCreated() public view returns (MarketToken[] memory) {
+        // instead of .owner it will be the .seller
+        uint256 totalItemCount = _tokenIds.current();
+        uint256 itemCount = 0;
+        uint256 currentIndex = 0;
+
+        for (uint256 i = 0; i < totalItemCount; i++) {
+            if (idToMarketToken[i + 1].seller == msg.sender) {
+                itemCount += 1;
+            }
+        }
+
+        // second loop to loop through the amount
+        // you have purchased with itemcount
+        // check to see if the owner address equalt to msg.sender
+        MarketToken[] memory items = new MarketToken[](itemCount);
+        for (uint256 i = 0; i < totalItemCount; i++) {
+            if (idToMarketToken[i + 1].seller == msg.sender) {
+                uint256 currentId = idToMarketToken[i + 1].itemId;
+                //current array
+                MarketToken storage currentItem = idToMarketToken[currentId];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
+        }
+        return items;
+    }
 }
